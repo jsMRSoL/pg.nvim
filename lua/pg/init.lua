@@ -1,4 +1,15 @@
-local postgres_password = os.getenv('LSJ_PG_DATABASE_URL_LOCAL')
-local sql_script = "imaginary_file.sql"
-local cmd = "psql -d " .. postgres_password .. " -f " .. sql_script
-print(cmd)
+M = {}
+
+M.setup = function ()
+  local cmd = vim.api.nvim_create_user_command
+
+  -- cmd('JoinLines', function(opts)
+  --   require('txtin.trans').join_lines(opts.line1, opts.line2)
+  -- end, { range = true })
+
+  cmd('SqlMode', function()
+    require('pg.command').create_layout()
+  end, {})
+end
+
+return M
