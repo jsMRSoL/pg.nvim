@@ -1,5 +1,4 @@
-# lewis
+# pg.nvim
 
-This is a collection of my lua functions for querying my Latin and Greek
-databases. They rely on external programs to actually make the queries. These
-are not included.
+This is a plugin experiment. My aim to write sql commands in a buffer, and then
+execute the buffer as an sql script passed to psql. Should be fun...!
