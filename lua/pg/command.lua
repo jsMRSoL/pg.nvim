@@ -179,7 +179,8 @@ M.dress_input = function()
   M.edited_output = edited_output
   local dressed_input = {}
   for _, line in ipairs(edited_output) do
-    local newline = vim.fn.substitute(line, "\\([^,]\\{1,}\\)", '"\\1"', "g")
+    local newline = vim.fn.substitute(line, "\\'", "\\'\\'", 'g')
+    newline = vim.fn.substitute(newline, "\\([^,]\\{1,}\\)", "'\\1'", "g")
     newline = "(" .. newline .. "),"
     table.insert(dressed_input, newline)
   end
@@ -192,12 +193,9 @@ M.dress_input = function()
 end
 
 M.upload_to_database = function()
-  local insert_buffer =
-    vim.api.nvim_buf_get_lines(M.buffers.insert, 0, -1, false)
-  local sql_script = vim.fn.join(insert_buffer, " ")
+  vim.cmd.write('/tmp/tmp_sql_file.sql')
   local postgres_password = os.getenv("LSJ_PG_DATABASE_URL_LOCAL")
-  local cmd = "psql -d " .. postgres_password .. ' -c "' .. sql_script .. '"'
-  -- P(cmd)
+  local cmd = "psql -d " .. postgres_password .. ' -f /tmp/tmp_sql_file.sql'
 
   local on_data = function(_, data, name)
     if name == "stdout" then
