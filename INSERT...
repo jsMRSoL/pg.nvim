@@ -1,0 +1,10 @@
+INSERT INTO lewis_short_lemmata (headword, suffixed, form, analysis)
+VALUES
+('obses','obses','obses', 'nom voc sing'),
+('obses','obses','obsidem', 'acc sing'),
+('obses','obses','obsidis', 'gen sing'),
+('obses','obses','obsidi', 'dat sing'),
+('obses','obses','obside', 'abl sing'),
+('obses','obses','obsides', 'nom acc pl'),
+('obses','obses','obsidium', 'gen pl'),
+('obses','obses','obsidibus', 'dat abl pl');

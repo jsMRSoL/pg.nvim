@@ -17,7 +17,7 @@ M.buffers = {
 M.reset_buffer = function(bfrkind)
   if bfrkind == "select" then
     vim.api.nvim_buf_set_lines(M.buffers.select, 0, -1, false, {
-      "SELECT headword, suffixed, form FROM lsj_lemmata WHERE headword = 'gai=a'",
+      "SELECT headword, suffixed, form FROM lewis_short_lemmata WHERE headword = 'gai=a'",
     })
     return
   end
@@ -27,7 +27,7 @@ M.reset_buffer = function(bfrkind)
       0,
       -1,
       false,
-      { "INSERT INTO lsj_lemmata (headword, suffixed, form)", "VALUES" }
+      { "INSERT INTO lewis_short_lemmata (headword, suffixed, form)", "VALUES" }
     )
     return
   end
@@ -64,13 +64,6 @@ M.create_layout = function()
   vim.bo.filetype = "sql"
   vim.api.nvim_buf_set_name(0, "INSERT...")
   M.reset_buffer("insert")
-  -- vim.api.nvim_buf_set_lines(
-  --   0,
-  --   0,
-  --   -1,
-  --   false,
-  --   { "INSERT INTO lsj_lemmata (headword, suffixed, form)", "VALUES" }
-  -- )
   vim.keymap.set(
     "n",
     "<F12>",
@@ -89,9 +82,6 @@ M.create_layout = function()
   vim.api.nvim_buf_set_name(0, "SELECT...")
   vim.bo.filetype = "sql"
   M.reset_buffer('select')
-  -- vim.api.nvim_buf_set_lines(0, 0, -1, false, {
-  --   "SELECT headword, suffixed, form FROM lsj_lemmata WHERE headword = 'gai=a'",
-  -- })
   vim.keymap.set(
     "n",
     "<F12>",
@@ -139,14 +129,14 @@ end
 
 M.query_database = function()
   local select_buffer =
-    vim.api.nvim_buf_get_lines(M.buffers.select, 0, -1, false)
+      vim.api.nvim_buf_get_lines(M.buffers.select, 0, -1, false)
   local sql_script = vim.fn.join(select_buffer, " ")
-  local postgres_password = os.getenv("LSJ_PG_DATABASE_URL_LOCAL")
+  local postgres_password = os.getenv("LATIN_PG_DATABASE_URL_LOCAL")
   local cmd = "psql -d "
-    .. postgres_password
-    .. ' -c "'
-    .. sql_script
-    .. '" --csv -t'
+      .. postgres_password
+      .. ' -c "'
+      .. sql_script
+      .. '" --csv -t'
 
   local on_data = function(_, data, name)
     if name == "stdout" then
@@ -173,7 +163,7 @@ M.dressed_input = {}
 
 M.dress_input = function()
   local edited_output =
-    vim.api.nvim_buf_get_lines(M.buffers.output, 0, -2, false)
+      vim.api.nvim_buf_get_lines(M.buffers.output, 0, -2, false)
   -- vim.cmd("norm ggdG")
   M.reset_buffer("output")
   M.edited_output = edited_output
@@ -186,7 +176,7 @@ M.dress_input = function()
   end
   local max_idx = #dressed_input
   dressed_input[max_idx] =
-    vim.fn.substitute(dressed_input[max_idx], ",$", ";", "")
+      vim.fn.substitute(dressed_input[max_idx], ",$", ";", "")
   M.dressed_input = dressed_input
   vim.api.nvim_buf_set_lines(M.buffers.insert, 3, -1, false, dressed_input)
   vim.api.nvim_set_current_win(M.windows.insert)
@@ -194,7 +184,7 @@ end
 
 M.upload_to_database = function()
   vim.cmd.write('/tmp/tmp_sql_file.sql')
-  local postgres_password = os.getenv("LSJ_PG_DATABASE_URL_LOCAL")
+  local postgres_password = os.getenv("LATIN_PG_DATABASE_URL_LOCAL")
   local cmd = "psql -d " .. postgres_password .. ' -f /tmp/tmp_sql_file.sql'
 
   local on_data = function(_, data, name)
